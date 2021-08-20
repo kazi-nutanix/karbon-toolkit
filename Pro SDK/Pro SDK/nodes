@@ -1,0 +1,2 @@
+karbon-pracdev-cap-d50bc8-k8s-worker-0   Ready    node     113d   v1.18.15   10.48.107.209   <none>        CentOS Linux 7 (Core)   3.10.0-1160.11.1.el7.x86_64   docker://18.9.8
+karbon-pracdev-cap-d50bc8-k8s-worker-1   Ready    node     17m    v1.18.15   10.48.107.228   <none>        CentOS Linux 7 (Core)   3.10.0-1160.11.1.el7.x86_64   docker://18.9.8
