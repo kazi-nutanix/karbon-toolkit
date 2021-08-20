@@ -6,9 +6,9 @@ if [ -z "$1" ]; then
     exit 1
 fi
 if [ ! -z "$2" ]; then
-    echo "Using namespace $1"
+    echo "Using namespace $2"
 else
-    "A namespace name is required. Try Again"
+    echo "A namespace name is required. Try Again"
     exit 1
 fi
 source $SERVER_CONFIG/data.cfg
@@ -18,7 +18,8 @@ secretName=$1
 token=$CNTR_RGSTR_PASSWD
 echo "Generating secret configuration $now"
 base64Token=$(echo -n "$userName:$token" | base64)
-base64DkrCfgToken=$(echo -n  '{"auths":{"$CNTR_RGSTR_SERVER":{"auth":'\"$base64Token\"'}}}' | base64 -w 0)
+dkrCfgString=$(echo -n '{"auths":{'\"$CNTR_RGSTR_SERVER_PORT\"':{"auth":'\"$base64Token\"'}}}')
+base64DkrCfgToken=$(echo "$dkrCfgString" | base64 -w 0)
 cat << EOF > deployments/$secretName-secret.yaml
 kind: Secret
 type: kubernetes.io/dockerconfigjson
@@ -28,5 +29,5 @@ metadata:
 data:
   .dockerconfigjson: $base64DkrCfgToken
 EOF
-echo "Creating secret $secretName in the cluster at $now"
+echo "Creating secret $secretName in the cluster on $now"
 kubectl create -f deployments/$secretName-secret.yaml -n $2
