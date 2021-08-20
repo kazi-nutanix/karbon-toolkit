@@ -11,8 +11,7 @@ fi
 
 
 echo "- Setting up env variables"
-PROJECT_PATH="${PWD}"
-source "$PROJECT_PATH/data.cfg"
+source "$SERVER_CONFIG/data.cfg"
 SVC_ACCOUNT_PASSWORD=$PRISM_PASSWD
 
 if [ -f $KUBECONFIG ]; then
@@ -41,7 +40,13 @@ kubectl create ns $NGINX_NS --context $1-context
 #helm install $NGINX_CHART $ARTIFACTS_FOLDER/nginx-ingress -n $NGINX_NS --set controller.service.type=NodePort --set controller.service.externalIPs={${NGINX_EXTERNAL_IPS}} --kube-context $1-context
 helm repo add nginx-stable https://helm.nginx.com/stable
 helm repo update
-helm install $NGINX_CHART nginx-stable/nginx-ingress --version $NGINX_VERSION -n $NGINX_NS --set controller.service.type=NodePort --set controller.service.externalIPs={${NGINX_EXTERNAL_IPS}} --kube-context $1-context
+#install latest or specefied version
+echo "nginx versin $NGINX_VERSION"
+if [ -f $NGINX_VERSION ]; then
+ helm install $NGINX_CHART nginx-stable/nginx-ingress -n $NGINX_NS --set controller.service.type=NodePort --set controller.service.externalIPs={${NGINX_EXTERNAL_IPS}} --kube-context $1-context
+else
+  helm install $NGINX_CHART nginx-stable/nginx-ingress --version $NGINX_VERSION -n $NGINX_NS --set controller.service.type=NodePort --set controller.service.externalIPs={${NGINX_EXTERNAL_IPS}} --kube-context $1-context 
+fi
 echo "#-------------------------------------#"
 echo "      Installation is done!"
 echo "#-------------------------------------#"
